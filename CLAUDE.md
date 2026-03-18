@@ -7,7 +7,7 @@
 Domain consolidation gem for emotion, affect, and motivational processing. Bundles 17 source extensions into one loadable unit under `Legion::Extensions::Agentic::Affect`.
 
 **Gem**: `lex-agentic-affect`
-**Version**: 0.1.0
+**Version**: 0.1.1
 **Namespace**: `Legion::Extensions::Agentic::Affect`
 
 ## Sub-Modules

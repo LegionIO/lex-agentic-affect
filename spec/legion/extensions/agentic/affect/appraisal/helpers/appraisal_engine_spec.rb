@@ -73,6 +73,19 @@ RSpec.describe Legion::Extensions::Agentic::Affect::Appraisal::Helpers::Appraisa
       # Strategy stored (engine is internal, test via evaluate_coping behavior)
       expect(data).to be_a(Hash)
     end
+
+    it 'rejects invalid coping_type' do
+      result = engine.add_coping_strategy(name: 'wishful', coping_type: :wishful_thinking, effectiveness: 0.5)
+      expect(result).to be(false)
+    end
+
+    it 'accepts all valid COPING_TYPES' do
+      constants = Legion::Extensions::Agentic::Affect::Appraisal::Helpers::Constants
+      constants::COPING_TYPES.each_with_index do |ct, i|
+        result = engine.add_coping_strategy(name: "strategy_#{i}", coping_type: ct, effectiveness: 0.5)
+        expect(result).to be(true)
+      end
+    end
   end
 
   describe '#evaluate_coping' do

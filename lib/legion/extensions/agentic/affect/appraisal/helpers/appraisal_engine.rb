@@ -43,6 +43,7 @@ module Legion
               end
 
               def add_coping_strategy(name:, coping_type:, effectiveness:)
+                return false unless COPING_TYPES.include?(coping_type)
                 return false if @coping_strategies.size >= MAX_COPING_STRATEGIES
 
                 @coping_strategies[name] = {

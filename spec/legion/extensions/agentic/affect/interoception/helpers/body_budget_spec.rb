@@ -26,6 +26,18 @@ RSpec.describe Legion::Extensions::Agentic::Affect::Interoception::Helpers::Body
       10.times { budget.report_vital(channel: :cpu_load, value: 0.9) }
       expect(budget.baselines[:cpu_load]).to be > 0.5
     end
+
+    it 'rejects invalid channels' do
+      expect(budget.report_vital(channel: :bogus_channel, value: 0.5)).to be_nil
+      expect(budget.channel_count).to eq(0)
+    end
+
+    it 'accepts all valid VITAL_CHANNELS' do
+      constants = Legion::Extensions::Agentic::Affect::Interoception::Helpers::Constants
+      constants::VITAL_CHANNELS.each do |ch|
+        expect(budget.report_vital(channel: ch, value: 0.5)).to be_a(Float)
+      end
+    end
   end
 
   describe '#deviation_for' do

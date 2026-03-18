@@ -1,6 +1,10 @@
 # Changelog
 
-## [Unreleased]
+## [0.1.1] - 2026-03-18
+
+### Fixed
+- Validate `channel` against `VITAL_CHANNELS` in `Interoception::BodyBudget#report_vital` — rejects unknown channel keys
+- Validate `coping_type` against `COPING_TYPES` in `Appraisal::AppraisalEngine#add_coping_strategy` — rejects invalid coping types
 
 ## [0.1.0] - 2026-03-18
 

@@ -22,6 +22,8 @@ module Legion
 
               def report_vital(channel:, value:)
                 channel = channel.to_sym
+                return nil unless VITAL_CHANNELS.include?(channel)
+
                 normalized = value.clamp(0.0, 1.0)
                 @baselines[channel] ||= DEFAULT_BASELINE
                 @vitals[channel] = if @vitals.key?(channel)

@@ -12,6 +12,8 @@ module Legion
 
               def report_vital(channel:, value:, **)
                 smoothed = body_budget.report_vital(channel: channel, value: value.to_f)
+                return { success: false, error: :invalid_channel, valid_channels: Helpers::Constants::VITAL_CHANNELS } unless smoothed
+
                 deviation = body_budget.deviation_for(channel)
                 Legion::Logging.debug "[interoception] vital: channel=#{channel} raw=#{value} " \
                                       "smoothed=#{smoothed.round(3)} deviation=#{deviation.round(3)}"
