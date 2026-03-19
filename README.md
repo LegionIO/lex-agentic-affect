@@ -33,7 +33,9 @@ Domain consolidation gem for emotion, affect, and motivational processing. Bundl
 ## Actors
 
 - `Affect::Emotion::Actors::MomentumDecay` — runs every 60s, decays emotional momentum via `decay_momentum`
+- `Affect::Interoception::Actors::Decay` — interval actor, decays interoceptive body state signals
 - `Affect::Reappraisal::Actors::AutoRegulate` — runs every 300s, processes pending emotional events
+- `Affect::SomaticMarker::Actors::Decay` — interval actor, decays somatic marker strength
 
 ## Installation
 
@@ -45,7 +47,7 @@ gem 'lex-agentic-affect'
 
 ```bash
 bundle install
-bundle exec rspec        # 1558 examples, 0 failures
+bundle exec rspec        # 1562 examples, 0 failures
 bundle exec rubocop      # 0 offenses
 ```
 
