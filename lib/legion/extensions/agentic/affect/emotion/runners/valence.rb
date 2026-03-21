@@ -72,6 +72,18 @@ module Legion
                 { arousal: arousal }
               end
 
+              def raise_urgency_for_knowledge_vulnerability(domains_at_risk:, severity: :warning, urgency_boost: 0.3, **)
+                boost = severity.to_sym == :critical ? [urgency_boost * 1.5, 1.0].min : urgency_boost.to_f
+                signal = { urgency_hint: boost, domain_weight: 0.6, impact_scope: 0.5,
+                           outcome_severity: boost, novelty_score: 0.3 }
+                result = evaluate_valence(signal: signal, source_type: :mesh_priority)
+
+                Legion::Logging.info "[emotion] knowledge_vulnerability urgency raised: domains=#{Array(domains_at_risk).join(',')} " \
+                                     "severity=#{severity} boost=#{boost.round(2)} urgency=#{result[:valence][:urgency].round(2)}"
+
+                result.merge(event: :knowledge_vulnerability, domains_at_risk: Array(domains_at_risk), urgency_boost: boost)
+              end
+
               private
 
               def emotion_baseline

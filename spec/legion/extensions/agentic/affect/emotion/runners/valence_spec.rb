@@ -64,4 +64,39 @@ RSpec.describe Legion::Extensions::Agentic::Affect::Emotion::Runners::Valence do
       expect(result[:arousal]).to be > 0.0
     end
   end
+
+  describe '#raise_urgency_for_knowledge_vulnerability' do
+    it 'returns a valence result with event tag' do
+      result = client.raise_urgency_for_knowledge_vulnerability(domains_at_risk: %w[pki vault])
+      expect(result[:event]).to eq(:knowledge_vulnerability)
+      expect(result[:domains_at_risk]).to eq(%w[pki vault])
+    end
+
+    it 'includes urgency_boost in the result' do
+      result = client.raise_urgency_for_knowledge_vulnerability(domains_at_risk: ['pki'])
+      expect(result[:urgency_boost]).to be > 0.0
+    end
+
+    it 'raises urgency higher for critical severity than warning' do
+      warning = client.raise_urgency_for_knowledge_vulnerability(
+        domains_at_risk: ['pki'], severity: :warning
+      )
+      critical = client.raise_urgency_for_knowledge_vulnerability(
+        domains_at_risk: ['pki'], severity: :critical
+      )
+      expect(critical[:urgency_boost]).to be > warning[:urgency_boost]
+    end
+
+    it 'returns a valence hash with all four dimensions' do
+      result = client.raise_urgency_for_knowledge_vulnerability(domains_at_risk: ['dns'])
+      expect(result[:valence].keys).to contain_exactly(:urgency, :importance, :novelty, :familiarity)
+    end
+
+    it 'accepts a custom urgency_boost' do
+      result = client.raise_urgency_for_knowledge_vulnerability(
+        domains_at_risk: ['ssh'], urgency_boost: 0.5
+      )
+      expect(result[:urgency_boost]).to be_within(0.01).of(0.5)
+    end
+  end
 end
