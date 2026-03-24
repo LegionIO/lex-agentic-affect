@@ -38,11 +38,30 @@ module Legion
               end
 
               def llm_ask(prompt)
-                chat = Legion::LLM.chat
-                chat.with_instructions(SYSTEM_PROMPT)
-                chat.ask(prompt)
+                if pipeline_available?
+                  response = Legion::LLM::Pipeline::GaiaCaller.chat(
+                    message: prompt,
+                    phase:   'reappraisal',
+                    caller:  { extension: 'lex-agentic-affect', mode: :reappraisal }
+                  )
+                  content = response&.message&.dig(:content)
+                  ::Struct.new(:content).new(content) if content
+                else
+                  chat = Legion::LLM.chat
+                  chat.with_instructions(SYSTEM_PROMPT)
+                  chat.ask(prompt)
+                end
               end
               private_class_method :llm_ask
+
+              def pipeline_available?
+                !!(defined?(Legion::LLM::Pipeline::GaiaCaller) &&
+                   Legion::LLM.respond_to?(:pipeline_enabled?) &&
+                   Legion::LLM.pipeline_enabled?)
+              rescue StandardError
+                false
+              end
+              private_class_method :pipeline_available?
 
               def build_generate_reappraisal_prompt(event_content:, initial_appraisal:, strategy:, valence:, intensity:)
                 <<~PROMPT
