@@ -7,13 +7,13 @@ module Legion
         module Empathy
           module Runners
             module Empathy
-              include Legion::Extensions::Helpers::Lex if Legion::Extensions.const_defined?(:Helpers) &&
-                                                          Legion::Extensions::Helpers.const_defined?(:Lex)
+              include Legion::Extensions::Helpers::Lex if Legion::Extensions.const_defined?(:Helpers, false) &&
+                                                          Legion::Extensions::Helpers.const_defined?(:Lex, false)
 
               def observe_agent(agent_id:, observation: {}, **)
                 model = model_store.update(agent_id, observation)
-                Legion::Logging.debug "[empathy] observed: agent=#{agent_id} emotion=#{model.emotional_state} " \
-                                      "cooperation=#{model.cooperation_stance}"
+                log.debug("[empathy] observed: agent=#{agent_id} emotion=#{model.emotional_state} " \
+                          "cooperation=#{model.cooperation_stance}")
 
                 {
                   agent_id:           agent_id,
@@ -28,11 +28,11 @@ module Legion
                 prediction = model_store.predict(agent_id, scenario)
 
                 if prediction
-                  Legion::Logging.debug "[empathy] prediction: agent=#{agent_id} response=#{prediction[:likely_response]} " \
-                                        "confidence=#{prediction[:confidence].round(2)}"
+                  log.debug("[empathy] prediction: agent=#{agent_id} response=#{prediction[:likely_response]} " \
+                            "confidence=#{prediction[:confidence].round(2)}")
                   prediction
                 else
-                  Legion::Logging.debug "[empathy] no model for agent=#{agent_id}"
+                  log.debug("[empathy] no model for agent=#{agent_id}")
                   { error: :no_model, agent_id: agent_id }
                 end
               end
@@ -50,8 +50,8 @@ module Legion
                 if result.nil?
                   { error: :prediction_not_found }
                 else
-                  Legion::Logging.info "[empathy] outcome recorded: agent=#{agent_id} accurate=#{accurate} " \
-                                       "accuracy=#{model.prediction_accuracy&.round(2)}"
+                  log.info("[empathy] outcome recorded: agent=#{agent_id} accurate=#{accurate} " \
+                           "accuracy=#{model.prediction_accuracy&.round(2)}")
                   { agent_id: agent_id, accurate: accurate, current_accuracy: model.prediction_accuracy }
                 end
               end
@@ -61,7 +61,7 @@ module Legion
                 return { error: :no_model, agent_id: agent_id } unless model
 
                 narrative = build_perspective_narrative(model)
-                Legion::Logging.debug "[empathy] perspective: agent=#{agent_id}"
+                log.debug("[empathy] perspective: agent=#{agent_id}")
 
                 {
                   agent_id:  agent_id,
@@ -76,8 +76,8 @@ module Legion
                 competitive = model_store.by_cooperation(:competitive).size
                 stressed = model_store.by_emotion(:stressed).size + model_store.by_emotion(:frustrated).size
 
-                Legion::Logging.debug "[empathy] landscape: agents=#{models.size} cooperative=#{cooperative} " \
-                                      "competitive=#{competitive} stressed=#{stressed}"
+                log.debug("[empathy] landscape: agents=#{models.size} cooperative=#{cooperative} " \
+                          "competitive=#{competitive} stressed=#{stressed}")
 
                 {
                   tracked_agents:    models.size,
@@ -93,7 +93,7 @@ module Legion
               def decay_models(**)
                 decayed = model_store.decay_all
                 removed = model_store.remove_stale
-                Legion::Logging.debug "[empathy] decay: updated=#{decayed} stale_removed=#{removed}"
+                log.debug("[empathy] decay: updated=#{decayed} stale_removed=#{removed}")
                 { decayed: decayed, stale_removed: removed }
               end
 
@@ -149,7 +149,7 @@ module Legion
               end
 
               def assess_climate(cooperative, competitive, stressed, total)
-                return :empty if total.zero?
+                return :empty if total.zero? # rubocop:disable Legion/Extension/RunnerReturnHash
 
                 coop_ratio = cooperative.to_f / total
                 stress_ratio = stressed.to_f / total

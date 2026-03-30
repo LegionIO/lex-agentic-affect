@@ -10,6 +10,7 @@ module Legion
       module Affect
         module Flow
           class Client
+            include Legion::Extensions::Helpers::Lex
             include Runners::Flow
 
             attr_reader :flow_detector

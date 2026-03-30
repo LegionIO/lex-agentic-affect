@@ -11,6 +11,7 @@ module Legion
       module Affect
         module Contagion
           class Client
+            include Legion::Extensions::Helpers::Lex
             include Runners::CognitiveContagion
 
             def initialize(**)

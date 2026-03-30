@@ -12,6 +12,7 @@ module Legion
       module Affect
         module SomaticMarker
           class Client
+            include Legion::Extensions::Helpers::Lex
             include Runners::SomaticMarker
 
             def initialize(**)

@@ -7,8 +7,8 @@ module Legion
         module Motivation
           module Runners
             module Motivation
-              include Legion::Extensions::Helpers::Lex if Legion::Extensions.const_defined?(:Helpers) &&
-                                                          Legion::Extensions::Helpers.const_defined?(:Lex)
+              include Legion::Extensions::Helpers::Lex if Legion::Extensions.const_defined?(:Helpers, false) &&
+                                                          Legion::Extensions::Helpers.const_defined?(:Lex, false)
 
               def update_motivation(tick_results: {}, **)
                 extract_drive_signals(tick_results)
@@ -16,9 +16,9 @@ module Legion
                 burnout = motivation_store.burnout_check
                 mode    = motivation_store.drive_state.current_mode
 
-                Legion::Logging.debug "[motivation] mode=#{mode} " \
-                                      "overall=#{motivation_store.drive_state.overall_level.round(3)} " \
-                                      "amotivated=#{motivation_store.drive_state.amotivated?}"
+                log.debug("[motivation] mode=#{mode} " \
+                          "overall=#{motivation_store.drive_state.overall_level.round(3)} " \
+                          "amotivated=#{motivation_store.drive_state.amotivated?}")
 
                 {
                   mode:              mode,
@@ -37,7 +37,7 @@ module Legion
                 motivation_store.drive_state.update_drive(drive_sym, signal.to_f)
                 level = motivation_store.drive_state.drive_level(drive_sym)
 
-                Legion::Logging.debug "[motivation] drive signal: #{drive_sym}=#{level.round(3)}"
+                log.debug("[motivation] drive signal: #{drive_sym}=#{level.round(3)}")
                 { success: true, drive: drive_sym, level: level.round(4) }
               end
 
@@ -47,29 +47,29 @@ module Legion
 
                 if result
                   energy = motivation_store.goal_energy(goal_id)
-                  Legion::Logging.info "[motivation] committed goal=#{goal_id} energy=#{energy.round(3)}"
+                  log.info("[motivation] committed goal=#{goal_id} energy=#{energy.round(3)}")
                   { success: true, goal_id: goal_id, energy: energy.round(4) }
                 else
-                  Legion::Logging.warn "[motivation] commit_goal rejected: no valid drives for #{goal_id}"
+                  log.warn("[motivation] commit_goal rejected: no valid drives for #{goal_id}")
                   { success: false, error: 'no valid drives provided' }
                 end
               end
 
               def release_goal(goal_id:, **)
                 motivation_store.release_goal(goal_id)
-                Legion::Logging.debug "[motivation] released goal=#{goal_id}"
+                log.debug("[motivation] released goal=#{goal_id}")
                 { success: true, goal_id: goal_id }
               end
 
               def motivation_for(goal_id:, **)
                 energy = motivation_store.goal_energy(goal_id)
-                Legion::Logging.debug "[motivation] motivation_for goal=#{goal_id} energy=#{energy.round(3)}"
+                log.debug("[motivation] motivation_for goal=#{goal_id} energy=#{energy.round(3)}")
                 { goal_id: goal_id, energy: energy.round(4) }
               end
 
               def most_motivated_goal(**)
                 result = motivation_store.most_motivated_goal
-                Legion::Logging.debug "[motivation] most_motivated_goal=#{result&.fetch(:goal_id, nil)}"
+                log.debug("[motivation] most_motivated_goal=#{result&.fetch(:goal_id, nil)}")
                 result || { goal_id: nil, energy: 0.0, drives: [] }
               end
 
@@ -78,7 +78,7 @@ module Legion
                   { level: d[:level].round(4), satisfied: d[:satisfied] }
                 end
 
-                Legion::Logging.debug '[motivation] drive_status'
+                log.debug('[motivation] drive_status')
                 {
                   drives:  drives,
                   mode:    motivation_store.drive_state.current_mode,
@@ -87,7 +87,7 @@ module Legion
               end
 
               def motivation_stats(**)
-                Legion::Logging.debug '[motivation] stats'
+                log.debug('[motivation] stats')
                 motivation_store.stats
               end
 

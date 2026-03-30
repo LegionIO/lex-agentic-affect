@@ -8,7 +8,7 @@ module Legion
       module Affect
         module Interoception
           module Actor
-            class Decay < Legion::Extensions::Actors::Every
+            class Decay < Legion::Extensions::Actors::Every # rubocop:disable Legion/Extension/EveryActorRequiresTime
               def runner_class
                 Legion::Extensions::Agentic::Affect::Interoception::Runners::Interoception
               end

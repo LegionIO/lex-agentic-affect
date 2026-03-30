@@ -7,16 +7,16 @@ module Legion
         module Resonance
           module Runners
             module CognitiveResonance
-              include Legion::Extensions::Helpers::Lex if Legion::Extensions.const_defined?(:Helpers) &&
-                                                          Legion::Extensions::Helpers.const_defined?(:Lex)
+              include Legion::Extensions::Helpers::Lex if Legion::Extensions.const_defined?(:Helpers, false) &&
+                                                          Legion::Extensions::Helpers.const_defined?(:Lex, false)
 
               def present_input(input:, engine: nil, **)
                 resonance_engine = engine || default_engine
                 return { success: false, error: :empty_input } if input.nil? || input.empty?
 
                 result = resonance_engine.present_input(input: input)
-                Legion::Logging.debug "[cognitive_resonance] present_input outcome=#{result[:outcome]} " \
-                                      "category=#{result[:category_id][0..7]}"
+                log.debug("[cognitive_resonance] present_input outcome=#{result[:outcome]} " \
+                          "category=#{result[:category_id][0..7]}")
                 { success: true }.merge(result)
               end
 
@@ -29,8 +29,8 @@ module Legion
 
                 if match
                   quality_label = Helpers::Constants.match_label(match[:quality])
-                  Legion::Logging.debug "[cognitive_resonance] classify category=#{match[:id][0..7]} " \
-                                        "quality=#{match[:quality].round(3)} label=#{quality_label}"
+                  log.debug("[cognitive_resonance] classify category=#{match[:id][0..7]} " \
+                            "quality=#{match[:quality].round(3)} label=#{quality_label}")
                   {
                     success:     true,
                     found:       true,
@@ -39,7 +39,7 @@ module Legion
                     label:       quality_label
                   }
                 else
-                  Legion::Logging.debug '[cognitive_resonance] classify found=false (no categories)'
+                  log.debug('[cognitive_resonance] classify found=false (no categories)')
                   { success: true, found: false, category_id: nil, quality: 0.0, label: :none }
                 end
               end
@@ -50,7 +50,7 @@ module Legion
                 new_vigilance    = resonance_engine.adjust_vigilance(amount: clamped_amount)
                 vigilance_label  = Helpers::Constants.vigilance_label(new_vigilance)
 
-                Legion::Logging.debug "[cognitive_resonance] vigilance=#{new_vigilance.round(3)} label=#{vigilance_label}"
+                log.debug("[cognitive_resonance] vigilance=#{new_vigilance.round(3)} label=#{vigilance_label}")
                 {
                   success:         true,
                   vigilance:       new_vigilance,
@@ -62,21 +62,21 @@ module Legion
               def resonance_report(engine: nil, **)
                 resonance_engine = engine || default_engine
                 report = resonance_engine.resonance_report
-                Legion::Logging.debug "[cognitive_resonance] report categories=#{report[:category_count]} " \
-                                      "vigilance=#{report[:vigilance].round(3)}"
+                log.debug("[cognitive_resonance] report categories=#{report[:category_count]} " \
+                          "vigilance=#{report[:vigilance].round(3)}")
                 { success: true }.merge(report)
               end
 
               def category_count(engine: nil, **)
                 resonance_engine = engine || default_engine
                 count = resonance_engine.category_count
-                Legion::Logging.debug "[cognitive_resonance] category_count=#{count}"
+                log.debug("[cognitive_resonance] category_count=#{count}")
                 { success: true, count: count }
               end
 
               def reset_engine(**)
                 @default_engine = nil
-                Legion::Logging.debug '[cognitive_resonance] engine reset'
+                log.debug('[cognitive_resonance] engine reset')
                 { success: true, reset: true }
               end
 

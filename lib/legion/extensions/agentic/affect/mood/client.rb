@@ -6,6 +6,7 @@ module Legion
       module Affect
         module Mood
           class Client
+            include Legion::Extensions::Helpers::Lex
             include Runners::Mood
 
             attr_reader :mood_state

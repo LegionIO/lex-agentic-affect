@@ -7,17 +7,17 @@ module Legion
         module Resilience
           module Runners
             module Resilience
-              include Legion::Extensions::Helpers::Lex if Legion::Extensions.const_defined?(:Helpers) &&
-                                                          Legion::Extensions::Helpers.const_defined?(:Lex)
+              include Legion::Extensions::Helpers::Lex if Legion::Extensions.const_defined?(:Helpers, false) &&
+                                                          Legion::Extensions::Helpers.const_defined?(:Lex, false)
 
               def update_resilience(tick_results: {}, **)
                 detect_adversities(tick_results)
                 recovery = adversity_tracker.tick_recovery
                 resilience_model.update_from_tracker(adversity_tracker)
 
-                Legion::Logging.debug "[resilience] active=#{recovery[:active_count]} " \
-                                      "resolved=#{recovery[:resolved_count]} " \
-                                      "composite=#{resilience_model.composite_score.round(3)}"
+                log.debug("[resilience] active=#{recovery[:active_count]} " \
+                          "resolved=#{recovery[:resolved_count]} " \
+                          "composite=#{resilience_model.composite_score.round(3)}")
 
                 {
                   active_adversities: recovery[:active_count],
@@ -33,13 +33,13 @@ module Legion
                 adversity = adversity_tracker.register(type: type, severity: severity, context: context)
                 return { success: false, error: 'invalid type or severity' } unless adversity
 
-                Legion::Logging.info "[resilience] adversity registered: type=#{type} severity=#{severity}"
+                log.info("[resilience] adversity registered: type=#{type} severity=#{severity}")
                 { success: true, adversity: adversity }
               end
 
               def resilience_status(**)
                 model_state = resilience_model.to_h
-                Legion::Logging.debug "[resilience] status: #{model_state[:class]} score=#{model_state[:composite]}"
+                log.debug("[resilience] status: #{model_state[:class]} score=#{model_state[:composite]}")
 
                 model_state.merge(
                   active_adversities:     adversity_tracker.active_adversities.size,
@@ -50,7 +50,7 @@ module Legion
               end
 
               def adversity_report(**)
-                Legion::Logging.debug '[resilience] adversity report'
+                log.debug('[resilience] adversity report')
 
                 {
                   active:    adversity_tracker.active_adversities,
@@ -65,12 +65,12 @@ module Legion
                 detail = resilience_model.dimension_detail(dimension.to_sym)
                 return { error: "unknown dimension: #{dimension}" } unless detail
 
-                Legion::Logging.debug "[resilience] dimension #{dimension}: #{detail[:value]}"
+                log.debug("[resilience] dimension #{dimension}: #{detail[:value]}")
                 detail
               end
 
               def resilience_stats(**)
-                Legion::Logging.debug '[resilience] stats'
+                log.debug('[resilience] stats')
 
                 {
                   composite:              resilience_model.composite_score.round(4),

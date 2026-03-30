@@ -11,6 +11,7 @@ module Legion
       module Affect
         module Motivation
           class Client
+            include Legion::Extensions::Helpers::Lex
             include Runners::Motivation
 
             attr_reader :motivation_store

@@ -7,14 +7,14 @@ module Legion
         module Reward
           module Runners
             module Reward
-              include Legion::Extensions::Helpers::Lex if Legion::Extensions.const_defined?(:Helpers) &&
-                                                          Legion::Extensions::Helpers.const_defined?(:Lex)
+              include Legion::Extensions::Helpers::Lex if Legion::Extensions.const_defined?(:Helpers, false) &&
+                                                          Legion::Extensions::Helpers.const_defined?(:Lex, false)
 
               def compute_reward(tick_results: {}, **)
                 result = reward_store.process_tick(tick_results)
 
-                Legion::Logging.debug "[reward] reward=#{result[:reward]} rpe=#{result[:rpe]} " \
-                                      "class=#{result[:rpe_class]} learning=#{result[:learning_signal]}"
+                log.debug("[reward] reward=#{result[:reward]} rpe=#{result[:rpe]} " \
+                          "class=#{result[:rpe_class]} learning=#{result[:learning_signal]}")
 
                 result
               end
@@ -23,21 +23,21 @@ module Legion
                 sig = reward_store.signal
                 health = reward_store.health_assessment
 
-                Legion::Logging.debug "[reward] status: avg=#{sig.running_average.round(3)} " \
-                                      "predicted=#{sig.predicted_reward.round(3)} health=#{health[:status]}"
+                log.debug("[reward] status: avg=#{sig.running_average.round(3)} " \
+                          "predicted=#{sig.predicted_reward.round(3)} health=#{health[:status]}")
 
                 sig.to_h.merge(health: health)
               end
 
               def reward_for(domain:, **)
                 report = reward_store.domain_report(domain)
-                Legion::Logging.debug "[reward] domain=#{domain} avg=#{report[:average].round(3)} trend=#{report[:trend]}"
+                log.debug("[reward] domain=#{domain} avg=#{report[:average].round(3)} trend=#{report[:trend]}")
                 report
               end
 
               def reward_history(limit: 20, **)
                 recent = reward_store.signal.recent_rewards(limit)
-                Legion::Logging.debug "[reward] history: #{recent.size} entries"
+                log.debug("[reward] history: #{recent.size} entries")
 
                 {
                   history:           recent,
@@ -48,7 +48,7 @@ module Legion
 
               def domain_rewards(**)
                 averages = reward_store.all_domain_averages
-                Legion::Logging.debug "[reward] domains: #{averages.size} tracked"
+                log.debug("[reward] domains: #{averages.size} tracked")
 
                 {
                   domains:      averages,
@@ -62,7 +62,7 @@ module Legion
                 sig = reward_store.signal
                 health = reward_store.health_assessment
 
-                Legion::Logging.debug '[reward] stats'
+                log.debug('[reward] stats')
 
                 {
                   running_average:   sig.running_average.round(4),

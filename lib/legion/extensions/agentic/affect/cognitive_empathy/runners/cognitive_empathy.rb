@@ -81,7 +81,9 @@ module Legion
               end
 
               def accuracy_label(accuracy)
-                ACCURACY_LABELS.each { |range, lbl| return lbl if range.cover?(accuracy) }
+                ACCURACY_LABELS.each do |range, lbl|
+                  return lbl if range.cover?(accuracy) # rubocop:disable Legion/Extension/RunnerReturnHash
+                end
                 :blind
               end
             end

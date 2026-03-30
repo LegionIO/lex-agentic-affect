@@ -8,7 +8,7 @@ module Legion
       module Affect
         module Emotion
           module Actor
-            class MomentumDecay < Legion::Extensions::Actors::Every
+            class MomentumDecay < Legion::Extensions::Actors::Every # rubocop:disable Legion/Extension/EveryActorRequiresTime
               def runner_class
                 Legion::Extensions::Agentic::Affect::Emotion::Runners::Gut
               end

@@ -7,8 +7,8 @@ module Legion
         module Flow
           module Runners
             module Flow
-              include Legion::Extensions::Helpers::Lex if Legion::Extensions.const_defined?(:Helpers) &&
-                                                          Legion::Extensions::Helpers.const_defined?(:Lex)
+              include Legion::Extensions::Helpers::Lex if Legion::Extensions.const_defined?(:Helpers, false) &&
+                                                          Legion::Extensions::Helpers.const_defined?(:Lex, false)
 
               def update_flow(tick_results: {}, **)
                 challenge_input = extract_challenge(tick_results)
@@ -23,8 +23,8 @@ module Legion
                   flow_detector.instance_variable_set(:@consecutive_flow_ticks, 0)
                 end
 
-                Legion::Logging.debug "[flow] state=#{flow_detector.flow_state} score=#{flow_detector.flow_score.round(3)} " \
-                                      "deep=#{flow_detector.deep_flow?} breakers=#{breakers}"
+                log.debug("[flow] state=#{flow_detector.flow_state} score=#{flow_detector.flow_score.round(3)} " \
+                          "deep=#{flow_detector.deep_flow?} breakers=#{breakers}")
 
                 {
                   state:     flow_detector.flow_state,
@@ -39,24 +39,24 @@ module Legion
               end
 
               def flow_status(**)
-                Legion::Logging.debug "[flow] status: state=#{flow_detector.flow_state} score=#{flow_detector.flow_score.round(3)}"
+                log.debug("[flow] status: state=#{flow_detector.flow_state} score=#{flow_detector.flow_score.round(3)}")
                 flow_detector.to_h
               end
 
               def flow_effects(**)
                 effects = flow_detector.flow_effects
-                Legion::Logging.debug "[flow] effects: #{effects}"
+                log.debug("[flow] effects: #{effects}")
                 { effects: effects, in_flow: flow_detector.in_flow?, deep_flow: flow_detector.deep_flow? }
               end
 
               def flow_history(limit: 20, **)
                 recent = flow_detector.history.last(limit)
-                Legion::Logging.debug "[flow] history: #{recent.size} entries"
+                log.debug("[flow] history: #{recent.size} entries")
                 { history: recent, total: flow_detector.history.size }
               end
 
               def flow_stats(**)
-                Legion::Logging.debug '[flow] stats'
+                log.debug('[flow] stats')
                 {
                   state:                  flow_detector.flow_state,
                   score:                  flow_detector.flow_score.round(3),

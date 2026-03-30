@@ -11,6 +11,7 @@ module Legion
       module Affect
         module Fatigue
           class Client
+            include Legion::Extensions::Helpers::Lex
             include Runners::Fatigue
 
             attr_reader :fatigue_store

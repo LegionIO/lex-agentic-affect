@@ -6,6 +6,7 @@ module Legion
       module Affect
         module Empathy
           class Client
+            include Legion::Extensions::Helpers::Lex
             include Runners::Empathy
 
             attr_reader :model_store

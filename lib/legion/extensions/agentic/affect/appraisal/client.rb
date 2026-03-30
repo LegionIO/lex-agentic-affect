@@ -11,6 +11,7 @@ module Legion
       module Affect
         module Appraisal
           class Client
+            include Legion::Extensions::Helpers::Lex
             include Runners::Appraisal
           end
         end

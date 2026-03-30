@@ -7,8 +7,8 @@ module Legion
         module Emotion
           module Runners
             module Valence
-              include Legion::Extensions::Helpers::Lex if Legion::Extensions.const_defined?(:Helpers) &&
-                                                          Legion::Extensions::Helpers.const_defined?(:Lex)
+              include Legion::Extensions::Helpers::Lex if Legion::Extensions.const_defined?(:Helpers, false) &&
+                                                          Legion::Extensions::Helpers.const_defined?(:Lex, false)
 
               def evaluate_valence(signal:, source_type: :ambient, deadline: nil, domain: nil, **)
                 baseline = emotion_baseline
@@ -34,9 +34,9 @@ module Legion
 
                 magnitude = Helpers::Valence.magnitude(valence)
                 dominant = Helpers::Valence.dominant_dimension(valence)
-                Legion::Logging.debug "[emotion] valence: source=#{source_type} magnitude=#{magnitude.round(2)} dominant=#{dominant} " \
-                                      "u=#{valence[:urgency].round(2)} i=#{valence[:importance].round(2)} " \
-                                      "n=#{valence[:novelty].round(2)} f=#{valence[:familiarity].round(2)}"
+                log.debug("[emotion] valence: source=#{source_type} magnitude=#{magnitude.round(2)} dominant=#{dominant} " \
+                          "u=#{valence[:urgency].round(2)} i=#{valence[:importance].round(2)} " \
+                          "n=#{valence[:novelty].round(2)} f=#{valence[:familiarity].round(2)}")
 
                 {
                   valence:            valence,
@@ -50,7 +50,7 @@ module Legion
                 arousal = Helpers::Valence.compute_arousal(valences)
                 dominant = Helpers::Valence.dominant_dimension(aggregated)
 
-                Legion::Logging.debug "[emotion] aggregate: count=#{valences.size} arousal=#{arousal.round(2)} dominant=#{dominant}"
+                log.debug("[emotion] aggregate: count=#{valences.size} arousal=#{arousal.round(2)} dominant=#{dominant}")
                 {
                   aggregate: aggregated,
                   arousal:   arousal,
@@ -62,13 +62,13 @@ module Legion
               def modulate_attention(base_salience:, valence:, **)
                 modulated = Helpers::Valence.modulate_salience(base_salience, valence)
                 boost = modulated - base_salience
-                Legion::Logging.debug "[emotion] attention modulation: base=#{base_salience.round(2)} modulated=#{modulated.round(2)} boost=#{boost.round(2)}"
+                log.debug("[emotion] attention modulation: base=#{base_salience.round(2)} modulated=#{modulated.round(2)} boost=#{boost.round(2)}")
                 { original: base_salience, modulated: modulated, boost: boost }
               end
 
               def compute_arousal(valences:, **)
                 arousal = Helpers::Valence.compute_arousal(valences)
-                Legion::Logging.debug "[emotion] arousal=#{arousal.round(2)} from #{valences.size} valences"
+                log.debug("[emotion] arousal=#{arousal.round(2)} from #{valences.size} valences")
                 { arousal: arousal }
               end
 
@@ -78,8 +78,8 @@ module Legion
                            outcome_severity: boost, novelty_score: 0.3 }
                 result = evaluate_valence(signal: signal, source_type: :mesh_priority)
 
-                Legion::Logging.info "[emotion] knowledge_vulnerability urgency raised: domains=#{Array(domains_at_risk).join(',')} " \
-                                     "severity=#{severity} boost=#{boost.round(2)} urgency=#{result[:valence][:urgency].round(2)}"
+                log.info("[emotion] knowledge_vulnerability urgency raised: domains=#{Array(domains_at_risk).join(',')} " \
+                         "severity=#{severity} boost=#{boost.round(2)} urgency=#{result[:valence][:urgency].round(2)}")
 
                 result.merge(event: :knowledge_vulnerability, domains_at_risk: Array(domains_at_risk), urgency_boost: boost)
               end

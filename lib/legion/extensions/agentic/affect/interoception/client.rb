@@ -11,6 +11,7 @@ module Legion
       module Affect
         module Interoception
           class Client
+            include Legion::Extensions::Helpers::Lex
             include Runners::Interoception
 
             def initialize(body_budget: nil, **)

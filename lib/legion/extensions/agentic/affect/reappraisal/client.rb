@@ -11,6 +11,7 @@ module Legion
       module Affect
         module Reappraisal
           class Client
+            include Legion::Extensions::Helpers::Lex
             include Runners::CognitiveReappraisal
 
             def initialize(engine: nil, **)

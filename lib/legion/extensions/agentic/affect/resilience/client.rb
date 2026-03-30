@@ -11,6 +11,7 @@ module Legion
       module Affect
         module Resilience
           class Client
+            include Legion::Extensions::Helpers::Lex
             include Runners::Resilience
 
             attr_reader :adversity_tracker, :resilience_model
