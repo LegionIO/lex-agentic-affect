@@ -12,6 +12,7 @@ module Legion
       module Affect
         module Emotion
           class Client
+            include Legion::Extensions::Helpers::Lex
             include Runners::Valence
             include Runners::Gut
 

@@ -107,7 +107,7 @@ RSpec.describe Legion::Extensions::Agentic::Affect::SomaticMarker::Helpers::Mark
 
     it 'caps options at MAX_OPTIONS_PER_DECISION' do
       max = Legion::Extensions::Agentic::Affect::SomaticMarker::Helpers::Constants::MAX_OPTIONS_PER_DECISION
-      options = (max + 5).times.map { |i| :"option_#{i}" }
+      options = Array.new(max + 5) { |i| :"option_#{i}" }
       result = store.decide(options: options, domain: :ops)
       expect(result[:ranked].size).to eq(max)
     end

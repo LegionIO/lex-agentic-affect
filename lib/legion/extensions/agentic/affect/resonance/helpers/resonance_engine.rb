@@ -43,7 +43,7 @@ module Legion
 
               def adjust_vigilance(amount:)
                 @vigilance = (@vigilance + amount).clamp(0.0, 1.0)
-                Legion::Logging.debug "[cognitive_resonance] vigilance adjusted to #{@vigilance.round(3)}"
+                Legion::Logging.debug("[cognitive_resonance] vigilance adjusted to #{@vigilance.round(3)}") # rubocop:disable Legion/HelperMigration/DirectLogging
                 @vigilance
               end
 
@@ -73,8 +73,10 @@ module Legion
               def resonate_with(match, normalized)
                 category = @categories[match[:id]]
                 category.update_prototype!(input: normalized)
-                Legion::Logging.debug "[cognitive_resonance] resonance with category #{match[:id][0..7]} " \
-                                      "quality=#{match[:quality].round(3)} vigilance=#{@vigilance.round(3)}"
+                # rubocop:disable Legion/HelperMigration/DirectLogging
+                Legion::Logging.debug("[cognitive_resonance] resonance with category #{match[:id][0..7]} " \
+                                      "quality=#{match[:quality].round(3)} vigilance=#{@vigilance.round(3)}")
+                # rubocop:enable Legion/HelperMigration/DirectLogging
                 {
                   outcome:     :resonance,
                   category_id: match[:id],
@@ -88,8 +90,10 @@ module Legion
                 prune_if_full!
                 category = Category.new(prototype: normalized)
                 @categories[category.id] = category
-                Legion::Logging.debug "[cognitive_resonance] new category #{category.id[0..7]} " \
-                                      "total=#{@categories.size} vigilance=#{@vigilance.round(3)}"
+                # rubocop:disable Legion/HelperMigration/DirectLogging
+                Legion::Logging.debug("[cognitive_resonance] new category #{category.id[0..7]} " \
+                                      "total=#{@categories.size} vigilance=#{@vigilance.round(3)}")
+                # rubocop:enable Legion/HelperMigration/DirectLogging
                 {
                   outcome:     :new_category,
                   category_id: category.id,
@@ -104,7 +108,7 @@ module Legion
 
                 oldest_id = @categories.min_by { |_, cat| cat.last_matched_at || Time.at(0) }.first
                 @categories.delete(oldest_id)
-                Legion::Logging.debug "[cognitive_resonance] pruned oldest category #{oldest_id[0..7]}"
+                Legion::Logging.debug("[cognitive_resonance] pruned oldest category #{oldest_id[0..7]}") # rubocop:disable Legion/HelperMigration/DirectLogging
               end
             end
           end

@@ -11,6 +11,7 @@ module Legion
       module Affect
         module Resonance
           class Client
+            include Legion::Extensions::Helpers::Lex
             include Runners::CognitiveResonance
 
             def initialize(**)

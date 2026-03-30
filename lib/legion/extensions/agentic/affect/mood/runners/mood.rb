@@ -7,15 +7,15 @@ module Legion
         module Mood
           module Runners
             module Mood
-              include Legion::Extensions::Helpers::Lex if Legion::Extensions.const_defined?(:Helpers) &&
-                                                          Legion::Extensions::Helpers.const_defined?(:Lex)
+              include Legion::Extensions::Helpers::Lex if Legion::Extensions.const_defined?(:Helpers, false) &&
+                                                          Legion::Extensions::Helpers.const_defined?(:Lex, false)
 
               def update_mood(tick_results: {}, **)
                 inputs = extract_mood_inputs(tick_results)
                 mood_state.update(inputs)
 
-                Legion::Logging.debug "[mood] #{mood_state.current_mood} (v=#{mood_state.valence.round(2)} " \
-                                      "a=#{mood_state.arousal.round(2)} e=#{mood_state.energy.round(2)})"
+                log.debug("[mood] #{mood_state.current_mood} (v=#{mood_state.valence.round(2)} " \
+                          "a=#{mood_state.arousal.round(2)} e=#{mood_state.energy.round(2)})")
 
                 {
                   mood:        mood_state.current_mood,
@@ -28,7 +28,7 @@ module Legion
               end
 
               def current_mood(**)
-                Legion::Logging.debug "[mood] query: #{mood_state.current_mood}"
+                log.debug("[mood] query: #{mood_state.current_mood}")
                 mood_state.to_h
               end
 
@@ -36,7 +36,7 @@ module Legion
                 mods = mood_state.modulations
                 value = mods[parameter.to_sym]
 
-                Legion::Logging.debug "[mood] modulation: #{parameter}=#{value} (mood=#{mood_state.current_mood})"
+                log.debug("[mood] modulation: #{parameter}=#{value} (mood=#{mood_state.current_mood})")
 
                 {
                   parameter:    parameter.to_sym,
@@ -108,7 +108,7 @@ module Legion
               def extract_energy(tick_results)
                 load = tick_results[:elapsed]
                 budget = tick_results[:budget]
-                return 0.5 unless load.is_a?(Numeric) && budget.is_a?(Numeric) && budget.positive?
+                return 0.5 unless load.is_a?(Numeric) && budget.is_a?(Numeric) && budget.positive? # rubocop:disable Legion/Extension/RunnerReturnHash
 
                 utilization = load / budget
                 (1.0 - utilization).clamp(0.0, 1.0)

@@ -6,6 +6,7 @@ module Legion
       module Affect
         module CognitiveEmpathy
           class Client
+            include Legion::Extensions::Helpers::Lex
             include Runners::CognitiveEmpathy
 
             def initialize(engine: nil)

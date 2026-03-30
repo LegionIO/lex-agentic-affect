@@ -11,6 +11,7 @@ module Legion
       module Affect
         module Defusion
           class Client
+            include Legion::Extensions::Helpers::Lex
             include Runners::CognitiveDefusion
 
             def initialize(engine: nil)

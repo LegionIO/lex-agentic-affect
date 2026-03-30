@@ -10,6 +10,7 @@ module Legion
       module Affect
         module Regulation
           class Client
+            include Legion::Extensions::Helpers::Lex
             include Runners::EmotionalRegulation
 
             attr_reader :regulation_model

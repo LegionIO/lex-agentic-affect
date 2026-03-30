@@ -8,7 +8,7 @@ module Legion
       module Affect
         module Reappraisal
           module Actor
-            class AutoRegulate < Legion::Extensions::Actors::Every
+            class AutoRegulate < Legion::Extensions::Actors::Every # rubocop:disable Legion/Extension/EveryActorRequiresTime
               def runner_class
                 Legion::Extensions::Agentic::Affect::Reappraisal::Runners::CognitiveReappraisal
               end

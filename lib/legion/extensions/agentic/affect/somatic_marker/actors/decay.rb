@@ -8,7 +8,7 @@ module Legion
       module Affect
         module SomaticMarker
           module Actor
-            class Decay < Legion::Extensions::Actors::Every
+            class Decay < Legion::Extensions::Actors::Every # rubocop:disable Legion/Extension/EveryActorRequiresTime
               def runner_class
                 Legion::Extensions::Agentic::Affect::SomaticMarker::Runners::SomaticMarker
               end

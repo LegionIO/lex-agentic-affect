@@ -7,8 +7,8 @@ module Legion
         module Regulation
           module Runners
             module EmotionalRegulation
-              include Legion::Extensions::Helpers::Lex if Legion::Extensions.const_defined?(:Helpers) &&
-                                                          Legion::Extensions::Helpers.const_defined?(:Lex)
+              include Legion::Extensions::Helpers::Lex if Legion::Extensions.const_defined?(:Helpers, false) &&
+                                                          Legion::Extensions::Helpers.const_defined?(:Lex, false)
 
               # Apply emotion regulation. Auto-selects strategy when none is provided.
               def regulate_emotion(emotion_magnitude:, emotion_valence: :neutral, strategy: nil, **)
@@ -23,10 +23,10 @@ module Legion
                   strategy:          chosen
                 )
 
-                Legion::Logging.debug "[emotional_regulation] regulate: strategy=#{chosen} " \
-                                      "magnitude=#{emotion_magnitude.round(2)} -> " \
-                                      "#{result[:regulated_magnitude].round(2)} " \
-                                      "cost=#{result[:cost].round(3)} success=#{result[:success]}"
+                log.debug("[emotional_regulation] regulate: strategy=#{chosen} " \
+                          "magnitude=#{emotion_magnitude.round(2)} -> " \
+                          "#{result[:regulated_magnitude].round(2)} " \
+                          "cost=#{result[:cost].round(3)} success=#{result[:success]}")
 
                 { success: true }.merge(result)
               end
@@ -39,8 +39,8 @@ module Legion
                   context:           context
                 )
 
-                Legion::Logging.debug "[emotional_regulation] recommend: magnitude=#{emotion_magnitude.round(2)} " \
-                                      "context=#{context} recommended=#{result[:recommended]}"
+                log.debug("[emotional_regulation] recommend: magnitude=#{emotion_magnitude.round(2)} " \
+                          "context=#{context} recommended=#{result[:recommended]}")
 
                 { success: true }.merge(result)
               end
@@ -51,7 +51,7 @@ module Legion
                 ability = regulation_model.overall_regulation_ability
                 label   = regulation_model.regulation_label
 
-                Legion::Logging.debug "[emotional_regulation] decay tick: ability=#{ability.round(3)} label=#{label}"
+                log.debug("[emotional_regulation] decay tick: ability=#{ability.round(3)} label=#{label}")
 
                 { success: true, overall_ability: ability, regulation_label: label }
               end
@@ -62,7 +62,7 @@ module Legion
                   [strategy, regulation_model.skill_for(strategy)]
                 end
 
-                Legion::Logging.debug "[emotional_regulation] profile query: overall=#{regulation_model.overall_regulation_ability.round(3)}"
+                log.debug("[emotional_regulation] profile query: overall=#{regulation_model.overall_regulation_ability.round(3)}")
 
                 {
                   success:      true,
@@ -76,7 +76,7 @@ module Legion
               # Return recent regulation events.
               def regulation_history(count: 20, **)
                 events = regulation_model.regulation_history.last(count)
-                Legion::Logging.debug "[emotional_regulation] history: requested=#{count} returned=#{events.size}"
+                log.debug("[emotional_regulation] history: requested=#{count} returned=#{events.size}")
                 { success: true, events: events, count: events.size }
               end
 
@@ -100,7 +100,7 @@ module Legion
                   [strategy, { count: events.size, successes: events.count { |e| e[:success] } }]
                 end
 
-                Legion::Logging.debug "[emotional_regulation] stats: total=#{total} success_rate=#{(successes.to_f / total).round(2)}"
+                log.debug("[emotional_regulation] stats: total=#{total} success_rate=#{(successes.to_f / total).round(2)}")
 
                 {
                   success:            true,

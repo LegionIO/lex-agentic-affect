@@ -7,8 +7,8 @@ module Legion
         module Emotion
           module Runners
             module Gut
-              include Legion::Extensions::Helpers::Lex if Legion::Extensions.const_defined?(:Helpers) &&
-                                                          Legion::Extensions::Helpers.const_defined?(:Lex)
+              include Legion::Extensions::Helpers::Lex if Legion::Extensions.const_defined?(:Helpers, false) &&
+                                                          Legion::Extensions::Helpers.const_defined?(:Lex, false)
 
               def gut_instinct(valences:, memory_signals: [], confidence_threshold: 0.5, **)
                 return { signal: :neutral, confidence: 0.0, basis: :insufficient_data } if valences.empty?
@@ -20,8 +20,8 @@ module Legion
                 signal = determine_signal(aggregate, arousal)
                 confidence = compute_confidence(valences, memory_signals)
 
-                Legion::Logging.debug "[emotion] gut instinct: signal=#{signal} confidence=#{confidence.round(2)} " \
-                                      "arousal=#{arousal.round(2)} dominant=#{dominant} reliable=#{confidence >= confidence_threshold}"
+                log.debug("[emotion] gut instinct: signal=#{signal} confidence=#{confidence.round(2)} " \
+                          "arousal=#{arousal.round(2)} dominant=#{dominant} reliable=#{confidence >= confidence_threshold}")
 
                 result = {
                   signal:     signal,
@@ -44,7 +44,7 @@ module Legion
                 momentum.update(neutral, 0.5)
                 stability = momentum.stability
 
-                Legion::Logging.debug "[emotion] momentum decay: stability=#{stability.round(2)}"
+                log.debug("[emotion] momentum decay: stability=#{stability.round(2)}")
 
                 { decayed: true, stability: stability }
               end
@@ -52,7 +52,7 @@ module Legion
               def emotional_state(**)
                 momentum = emotion_momentum
                 state = momentum.emotional_state
-                Legion::Logging.debug "[emotion] state query: stability=#{state[:stability]&.round(2)}"
+                log.debug("[emotion] state query: stability=#{state[:stability]&.round(2)}")
                 {
                   momentum: state,
                   baseline: emotion_baseline.dimensions
@@ -82,7 +82,7 @@ module Legion
               end
 
               def compute_confidence(valences, memory_signals)
-                return 0.0 if valences.empty?
+                return 0.0 if valences.empty? # rubocop:disable Legion/Extension/RunnerReturnHash
 
                 magnitudes = valences.map { |v| Helpers::Valence.magnitude(v) }
                 mean_mag = magnitudes.sum / magnitudes.size

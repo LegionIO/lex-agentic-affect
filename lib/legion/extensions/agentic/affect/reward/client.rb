@@ -11,6 +11,7 @@ module Legion
       module Affect
         module Reward
           class Client
+            include Legion::Extensions::Helpers::Lex
             include Runners::Reward
 
             attr_reader :reward_store
