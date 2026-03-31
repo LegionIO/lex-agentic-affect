@@ -10,6 +10,20 @@ module Legion
               include Legion::Extensions::Helpers::Lex if Legion::Extensions.const_defined?(:Helpers, false) &&
                                                           Legion::Extensions::Helpers.const_defined?(:Lex, false)
 
+              def observe_human_observations(human_observations: [], **)
+                return { observed: 0, identities: [] } if human_observations.empty?
+
+                identities = human_observations.map do |obs|
+                  model_store.update_from_human_observation(obs)
+                  obs[:identity].to_s
+                end
+
+                log.debug("[empathy] human_observations: count=#{identities.size} " \
+                          "identities=#{identities.join(',')}")
+
+                { observed: identities.size, identities: identities }
+              end
+
               def observe_agent(agent_id:, observation: {}, **)
                 model = model_store.update(agent_id, observation)
                 log.debug("[empathy] observed: agent=#{agent_id} emotion=#{model.emotional_state} " \
