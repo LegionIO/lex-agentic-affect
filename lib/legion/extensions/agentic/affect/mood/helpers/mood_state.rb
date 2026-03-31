@@ -9,6 +9,8 @@ module Legion
             class MoodState
               attr_reader :current_mood, :valence, :arousal, :energy, :stability, :history, :tick_counter
 
+              DIRTY_THRESHOLD = 0.02
+
               def initialize
                 @valence = 0.5
                 @arousal = 0.3
@@ -17,6 +19,8 @@ module Legion
                 @current_mood = :neutral
                 @history = []
                 @tick_counter = 0
+                @dirty = false
+                @last_persisted_valence = @valence
               end
 
               def update(inputs)
@@ -31,8 +35,40 @@ module Legion
                 compute_stability
                 classify_mood
                 record_history
+                check_dirty
 
                 @current_mood
+              end
+
+              def dirty?
+                @dirty
+              end
+
+              def mark_clean!
+                @dirty = false
+                @last_persisted_valence = @valence
+              end
+
+              def to_apollo_entries
+                [{
+                  content: ::JSON.generate(to_h.transform_keys(&:to_s).except('modulations')),
+                  tags:    %w[affect state global]
+                }]
+              end
+
+              def from_apollo(store:)
+                entries = store.query(tags: %w[affect state global])
+                return if entries.empty?
+
+                data = ::JSON.parse(entries.first[:content])
+                @valence = data['valence'].to_f if data['valence']
+                @arousal = data['arousal'].to_f if data['arousal']
+                @energy  = data['energy'].to_f  if data['energy']
+                @current_mood = data['current_mood']&.to_sym || @current_mood
+                @last_persisted_valence = @valence
+                @dirty = false
+              rescue ::JSON::ParserError => e
+                warn "[mood_state] from_apollo: invalid entry: #{e.message}"
               end
 
               def modulations
@@ -89,6 +125,10 @@ module Legion
               end
 
               private
+
+              def check_dirty
+                @dirty = true if (@valence - @last_persisted_valence).abs >= DIRTY_THRESHOLD
+              end
 
               def effective_alpha
                 base_alpha = Constants::MOOD_ALPHA
