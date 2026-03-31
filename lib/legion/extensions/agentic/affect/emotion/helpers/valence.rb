@@ -23,6 +23,7 @@ module Legion
               SOURCE_URGENCY = {
                 firmware_violation: 1.0,
                 human_direct:       0.9,
+                direct_address:     0.8,
                 mesh_priority:      0.7,
                 scheduled:          0.4,
                 ambient:            0.1

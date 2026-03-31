@@ -10,6 +10,28 @@ module Legion
               include Helpers::Constants
               include Legion::Extensions::Helpers::Lex if defined?(Legion::Extensions::Helpers::Lex)
 
+              def process_human_observations(human_observations: [], **)
+                return { processed: 0 } if human_observations.empty?
+
+                human_observations.each do |obs|
+                  identity  = obs[:identity].to_s
+                  bond_role = obs[:bond_role] || :unknown
+
+                  take_empathic_perspective(
+                    agent_id:         identity,
+                    perspective_type: :affective,
+                    predicted_state:  { bond_role: bond_role, channel: obs[:channel] },
+                    confidence:       bond_role == :partner ? 0.7 : 0.4
+                  )
+
+                  virulence = bond_role == :partner ? 0.3 : 0.05
+                  engine.emotional_contagion(emotion_valence: 0.5, intensity: virulence)
+                end
+
+                log.debug("[cognitive_empathy] process_human_observations: count=#{human_observations.size}")
+                { processed: human_observations.size }
+              end
+
               def take_empathic_perspective(agent_id:, perspective_type:, predicted_state:, confidence: 0.5, **)
                 perspective = engine.take_perspective(
                   agent_id:         agent_id,
