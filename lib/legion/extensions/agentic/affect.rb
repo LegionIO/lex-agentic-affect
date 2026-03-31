@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'affect/version'
+require_relative 'affect/personality_state'
 require_relative 'affect/cognitive_empathy'
 require_relative 'affect/reappraisal'
 require_relative 'affect/defusion'

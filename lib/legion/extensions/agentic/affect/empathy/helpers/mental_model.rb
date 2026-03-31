@@ -9,14 +9,16 @@ module Legion
             class MentalModel
               attr_reader :agent_id, :believed_goal, :emotional_state, :attention_focus,
                           :confidence_level, :cooperation_stance, :interaction_history,
-                          :predictions, :created_at, :updated_at
+                          :predictions, :created_at, :updated_at, :bond_role, :channel
 
-              def initialize(agent_id:)
+              def initialize(agent_id:, bond_role: :unknown, channel: nil, confidence: nil)
                 @agent_id = agent_id
+                @bond_role = bond_role
+                @channel = channel
                 @believed_goal = nil
                 @emotional_state = :unknown
                 @attention_focus = nil
-                @confidence_level = 0.5
+                @confidence_level = confidence || partner_default_confidence(bond_role)
                 @cooperation_stance = :unknown
                 @interaction_history = []
                 @predictions = []
@@ -83,6 +85,8 @@ module Legion
               def to_h
                 {
                   agent_id:            @agent_id,
+                  bond_role:           @bond_role,
+                  channel:             @channel,
                   believed_goal:       @believed_goal,
                   emotional_state:     @emotional_state,
                   attention_focus:     @attention_focus,
@@ -98,6 +102,10 @@ module Legion
               end
 
               private
+
+              def partner_default_confidence(bond_role)
+                bond_role == :partner ? 0.8 : 0.5
+              end
 
               def update_believed_goal(goal)
                 @believed_goal = goal

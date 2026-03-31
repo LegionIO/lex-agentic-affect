@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.7] - 2026-03-31
+
+### Added
+- Empathy: `MentalModel` tracks `bond_role` and `channel`; partners start with 0.8 confidence
+- Empathy: `ModelStore#update_from_human_observation` processes GAIA partner observation hashes
+- Empathy: `ModelStore` Apollo Local persistence — `dirty?`, `mark_clean!`, `to_apollo_entries`, `from_apollo`
+- Empathy runner: `observe_human_observations(human_observations:)` processes GAIA-passed obs arrays
+- CognitiveEmpathy runner: `process_human_observations(human_observations:)` — perspective tracking + contagion (partner virulence 0.3, unknown 0.05)
+- Valence: `:direct_address` source urgency 0.8 added to `SOURCE_URGENCY`
+- MoodState: Apollo Local persistence — `dirty?`, `mark_clean!`, `to_apollo_entries`, `from_apollo`
+- `PersonalityState`: new class modeling Big Five OCEAN traits with Apollo Local persistence
+
 ## [0.1.6] - 2026-03-30
 
 ### Changed
