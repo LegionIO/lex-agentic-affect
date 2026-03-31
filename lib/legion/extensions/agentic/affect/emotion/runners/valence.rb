@@ -72,6 +72,26 @@ module Legion
                 { arousal: arousal }
               end
 
+              def evaluate_partner_absence(consecutive_misses: 1, **)
+                importance = Helpers::Valence.absence_importance(consecutive_misses)
+
+                valence = Helpers::Valence.new_valence(
+                  urgency:     0.2,
+                  importance:  importance,
+                  novelty:     0.1,
+                  familiarity: 0.8
+                )
+
+                magnitude = Helpers::Valence.magnitude(valence)
+                dominant = Helpers::Valence.dominant_dimension(valence)
+
+                log.debug("[emotion] partner_absence: misses=#{consecutive_misses} " \
+                          "importance=#{importance.round(2)} magnitude=#{magnitude.round(2)}")
+
+                { valence: valence, magnitude: magnitude, dominant_dimension: dominant,
+                  event: :partner_absence, consecutive_misses: consecutive_misses }
+              end
+
               def raise_urgency_for_knowledge_vulnerability(domains_at_risk:, severity: :warning, urgency_boost: 0.3, **)
                 boost = severity.to_sym == :critical ? [urgency_boost * 1.5, 1.0].min : urgency_boost.to_f
                 signal = { urgency_hint: boost, domain_weight: 0.6, impact_scope: 0.5,
