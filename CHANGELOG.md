@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.8] - 2026-03-31
+
+### Added
+- Valence: `:partner_absence` source urgency 0.2 added to `SOURCE_URGENCY`
+- Valence: `ABSENCE_BASE_IMPORTANCE`, `ABSENCE_IMPORTANCE_SCALE`, `ABSENCE_MAX_IMPORTANCE` constants for logarithmic absence scaling
+- Valence helper: `absence_importance(consecutive_misses)` — logarithmic importance scaling capped at 0.7
+- Valence runner: `evaluate_partner_absence(consecutive_misses:)` — generates absence valence signal (urgency 0.2, novelty 0.1, familiarity 0.8, importance scales with misses)
+
 ## [0.1.7] - 2026-03-31
 
 ### Added

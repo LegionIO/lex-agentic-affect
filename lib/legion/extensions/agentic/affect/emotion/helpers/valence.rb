@@ -26,8 +26,14 @@ module Legion
                 direct_address:     0.8,
                 mesh_priority:      0.7,
                 scheduled:          0.4,
+                partner_absence:    0.2,
                 ambient:            0.1
               }.freeze
+
+              # Partner absence importance scaling
+              ABSENCE_BASE_IMPORTANCE = 0.4
+              ABSENCE_IMPORTANCE_SCALE = 0.1
+              ABSENCE_MAX_IMPORTANCE = 0.7
 
               # Familiarity saturation (spec Section 3.5)
               FAMILIARITY_SATURATION = 100
@@ -72,6 +78,11 @@ module Legion
 
                 total = valences.sum { |v| magnitude(v) }
                 clamp(total / (valences.size * MAX_MAGNITUDE))
+              end
+
+              def absence_importance(consecutive_misses)
+                raw = ABSENCE_BASE_IMPORTANCE + (ABSENCE_IMPORTANCE_SCALE * Math.log(consecutive_misses + 1))
+                clamp(raw, 0.0, ABSENCE_MAX_IMPORTANCE)
               end
 
               def modulate_salience(base_salience, valence)
