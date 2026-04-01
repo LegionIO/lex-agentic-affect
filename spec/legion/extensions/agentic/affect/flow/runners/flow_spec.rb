@@ -215,8 +215,12 @@ RSpec.describe Legion::Extensions::Agentic::Affect::Flow::Runners::Flow do
     it 'reaches deep flow after threshold' do
       50.times { client.update_flow(tick_results: balanced_tick) }
       status = client.flow_status
-      # May or may not reach deep flow depending on exact EMA convergence
-      expect(status[:consecutive_flow_ticks]).to be >= 0
+      # After 50 balanced ticks the agent is in :flow (confirmed by the prior example).
+      # DEEP_FLOW_THRESHOLD is 20 consecutive flow ticks, so consecutive_flow_ticks must
+      # exceed that threshold, and deep_flow? must be true.
+      expect(status[:in_flow]).to be true
+      expect(status[:consecutive_flow_ticks]).to be > Legion::Extensions::Agentic::Affect::Flow::Helpers::Constants::DEEP_FLOW_THRESHOLD
+      expect(status[:deep_flow]).to be true
     end
   end
 end

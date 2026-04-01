@@ -208,4 +208,107 @@ RSpec.describe Legion::Extensions::Agentic::Affect::Reappraisal::Helpers::Reappr
                            :overall_regulation_ability, :strategy_effectiveness)
     end
   end
+
+  describe '.mechanical_appraisal' do
+    subject(:appraisal) { described_class.mechanical_appraisal(strategy, valence) }
+
+    context 'with a known strategy and highly negative valence' do
+      let(:strategy) { :reinterpretation }
+      let(:valence)  { -0.8 }
+
+      it 'returns meaningful text (not a template stub)' do
+        expect(appraisal).not_to match(/auto-reappraised via/)
+        expect(appraisal).not_to match(/Reappraised via/)
+        expect(appraisal.length).to be > 20
+      end
+
+      it 'returns the highly_negative bracket text' do
+        expect(appraisal).to eq(
+          described_class::MECHANICAL_REAPPRAISALS[:reinterpretation][:highly_negative]
+        )
+      end
+    end
+
+    context 'with a known strategy and mildly negative valence' do
+      let(:strategy) { :distancing }
+      let(:valence)  { -0.3 }
+
+      it 'returns the negative bracket text' do
+        expect(appraisal).to eq(
+          described_class::MECHANICAL_REAPPRAISALS[:distancing][:negative]
+        )
+      end
+
+      it 'does not return a template stub' do
+        expect(appraisal).not_to match(/auto-reappraised via/)
+      end
+    end
+
+    context 'with a known strategy and neutral/positive valence' do
+      let(:strategy) { :benefit_finding }
+      let(:valence)  { 0.1 }
+
+      it 'returns the neutral bracket text' do
+        expect(appraisal).to eq(
+          described_class::MECHANICAL_REAPPRAISALS[:benefit_finding][:neutral]
+        )
+      end
+    end
+
+    context 'with normalizing strategy' do
+      let(:strategy) { :normalizing }
+      let(:valence)  { -0.4 }
+
+      it 'returns meaningful normalizing text' do
+        expect(appraisal).to include('common')
+      end
+    end
+
+    context 'with perspective_taking strategy' do
+      let(:strategy) { :perspective_taking }
+      let(:valence)  { -0.7 }
+
+      it 'returns meaningful perspective text' do
+        expect(appraisal).not_to match(/auto-reappraised via/)
+        expect(appraisal.length).to be > 20
+      end
+    end
+
+    context 'with temporal_distancing strategy' do
+      let(:strategy) { :temporal_distancing }
+      let(:valence)  { -0.7 }
+
+      it 'returns meaningful temporal text' do
+        expect(appraisal).not_to match(/auto-reappraised via/)
+        expect(appraisal).to include('time')
+      end
+    end
+
+    context 'with an unknown strategy' do
+      let(:strategy) { :unknown_strategy }
+      let(:valence)  { -0.5 }
+
+      it 'falls back to "Reappraised via <strategy>"' do
+        expect(appraisal).to eq('Reappraised via unknown_strategy')
+      end
+    end
+  end
+
+  describe '#auto_reappraise mechanical path' do
+    it 'produces meaningful appraisal text when called' do
+      event_id = engine.register_event(content: 'failure', valence: -0.7, intensity: 0.4, appraisal: 'terrible').id
+      engine.auto_reappraise(event_id: event_id)
+      appraisal = engine.events[event_id].appraisal
+      expect(appraisal).not_to match(/auto-reappraised via/)
+      expect(appraisal.length).to be > 20
+    end
+
+    it 'produces highly_negative bracket text for very negative events' do
+      event_id = engine.register_event(content: 'crisis', valence: -0.9, intensity: 0.9, appraisal: 'worst').id
+      engine.auto_reappraise(event_id: event_id)
+      # intense + negative → :distancing, valence -0.9 → :highly_negative
+      expected = described_class.mechanical_appraisal(:distancing, -0.9)
+      expect(engine.events[event_id].appraisal).to eq(expected)
+    end
+  end
 end
