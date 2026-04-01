@@ -9,6 +9,44 @@ module Legion
             class ReappraisalEngine
               include Constants
 
+              MECHANICAL_REAPPRAISALS = {
+                reinterpretation:    {
+                  negative:        'This situation may have aspects that are not immediately apparent. Consider alternative explanations.',
+                  highly_negative: 'Strong negative reactions often signal something important. Examine what underlying need is unmet.',
+                  neutral:         'A balanced perspective reveals both challenges and opportunities in this situation.'
+                },
+                distancing:          {
+                  negative:        'Viewed from a broader timeline, this event occupies a small portion of overall experience.',
+                  highly_negative: 'In the larger context of ongoing goals and relationships, this moment will pass.',
+                  neutral:         'Stepping back reveals this is one event among many.'
+                },
+                benefit_finding:     {
+                  negative:        'Difficult experiences often contain lessons that become apparent with reflection.',
+                  highly_negative: 'Even significant setbacks can reveal strengths and areas for growth.',
+                  neutral:         'There may be unexpected value in examining this experience closely.'
+                },
+                acceptance:          {
+                  negative:        'Acknowledging this experience as it is, without resistance, creates space for response.',
+                  highly_negative: 'Some experiences cannot be changed, only accepted and integrated.',
+                  neutral:         'This experience is acknowledged and integrated without judgment.'
+                },
+                normalizing:         {
+                  negative:        'Many others have faced similar situations. This reaction is a common and understandable response.',
+                  highly_negative: 'Intense responses to difficult events are a natural part of experience, not a sign of weakness.',
+                  neutral:         'This situation falls within the normal range of experience.'
+                },
+                perspective_taking:  {
+                  negative:        'Considering this from another vantage point reveals aspects that were not initially visible.',
+                  highly_negative: 'Seeing through a different lens can transform how a significant event is understood.',
+                  neutral:         'Multiple perspectives offer a fuller picture of what is happening.'
+                },
+                temporal_distancing: {
+                  negative:        'Looking back from the future, this moment is likely to appear smaller and more manageable.',
+                  highly_negative: 'Even the most difficult moments recede with time. This too will become part of a larger story.',
+                  neutral:         'In the fullness of time, the significance of this event will become clearer.'
+                }
+              }.freeze
+
               attr_reader :events, :reappraisal_log
 
               def initialize
@@ -65,7 +103,7 @@ module Legion
                 return { success: false, reason: :event_not_found } unless event
 
                 strategy = select_strategy(event)
-                new_appraisal = "auto-reappraised via #{strategy}"
+                new_appraisal = self.class.mechanical_appraisal(strategy, event.current_valence)
                 reappraise(event_id: event_id, strategy: strategy, new_appraisal: new_appraisal)
               end
 
@@ -129,6 +167,25 @@ module Legion
                   overall_regulation_ability: overall_regulation_ability,
                   strategy_effectiveness:     strategy_effectiveness
                 }
+              end
+
+              def self.valence_bracket(valence)
+                if valence < -0.6
+                  :highly_negative
+                elsif valence < 0.0
+                  :negative
+                else
+                  :neutral
+                end
+              end
+
+              def self.mechanical_appraisal(strategy, valence)
+                bracket  = valence_bracket(valence)
+                strategy = strategy.to_sym
+                brackets = MECHANICAL_REAPPRAISALS[strategy]
+                return "Reappraised via #{strategy}" unless brackets
+
+                brackets[bracket] || brackets.values.first || "Reappraised via #{strategy}"
               end
 
               private

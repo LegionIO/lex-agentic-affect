@@ -52,7 +52,8 @@ module Legion
                 return { success: false, reason: :event_not_found } unless event
 
                 strategy  = select_strategy_for(event)
-                appraisal = llm_appraisal_for(event, strategy) || "auto-reappraised via #{strategy}"
+                appraisal = llm_appraisal_for(event, strategy) ||
+                            Helpers::ReappraisalEngine.mechanical_appraisal(strategy, event.current_valence)
                 result    = eng.reappraise(event_id: event_id, strategy: strategy, new_appraisal: appraisal)
 
                 if result[:success]

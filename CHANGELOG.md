@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.9] - 2026-03-31
+
+### Fixed
+- Reappraisal: `ReappraisalEngine.mechanical_appraisal` replaces the meaningless `"auto-reappraised via #{strategy}"` placeholder with strategy- and valence-bracket-specific text drawn from `MECHANICAL_REAPPRAISALS` (7 strategies × 3 valence brackets: `highly_negative`, `negative`, `neutral`)
+- Reappraisal: `auto_reappraise` (engine) and `auto_reappraise_event` (runner) now use `mechanical_appraisal` as the LLM-unavailable fallback
+- Flow spec: replaced non-asserting `consecutive_flow_ticks >= 0` assertion with meaningful checks — after 50 balanced ticks the state must be `:flow`, `deep_flow` must be `true`, and `consecutive_flow_ticks` must exceed `DEEP_FLOW_THRESHOLD` (20)
+
 ## [0.1.8] - 2026-03-31
 
 ### Added

@@ -137,10 +137,16 @@ RSpec.describe Legion::Extensions::Agentic::Affect::Reappraisal::Runners::Cognit
         allow(enhancer).to receive(:available?).and_return(false)
       end
 
-      it 'falls back to mechanical appraisal stub' do
+      it 'falls back to a meaningful mechanical appraisal (not a template stub)' do
         result = client.auto_reappraise_event(event_id: registered[:event_id], engine: engine)
+        appraisal = engine.events[registered[:event_id]].appraisal
         expect(result[:success]).to be true
-        expect(engine.events[registered[:event_id]].appraisal).to match(/auto-reappraised via/)
+        # Valence -0.7 (highly_negative) with non-intense event → :reinterpretation strategy
+        expect(appraisal).to eq(
+          Legion::Extensions::Agentic::Affect::Reappraisal::Helpers::ReappraisalEngine
+            .mechanical_appraisal(:reinterpretation, -0.7)
+        )
+        expect(appraisal).not_to match(/auto-reappraised via/)
       end
     end
 
@@ -150,10 +156,15 @@ RSpec.describe Legion::Extensions::Agentic::Affect::Reappraisal::Runners::Cognit
         allow(enhancer).to receive(:generate_reappraisal).and_return(nil)
       end
 
-      it 'falls back to mechanical appraisal stub' do
+      it 'falls back to a meaningful mechanical appraisal (not a template stub)' do
         result = client.auto_reappraise_event(event_id: registered[:event_id], engine: engine)
+        appraisal = engine.events[registered[:event_id]].appraisal
         expect(result[:success]).to be true
-        expect(engine.events[registered[:event_id]].appraisal).to match(/auto-reappraised via/)
+        expect(appraisal).to eq(
+          Legion::Extensions::Agentic::Affect::Reappraisal::Helpers::ReappraisalEngine
+            .mechanical_appraisal(:reinterpretation, -0.7)
+        )
+        expect(appraisal).not_to match(/auto-reappraised via/)
       end
     end
   end
