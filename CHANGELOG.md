@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+- add missing arousal value to evaluate_valence return hash for GAIA drive synthesis
+
 ## [0.1.9] - 2026-03-31
 
 ### Fixed

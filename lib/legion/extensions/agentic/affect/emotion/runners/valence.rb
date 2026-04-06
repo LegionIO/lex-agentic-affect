@@ -41,7 +41,8 @@ module Legion
                 {
                   valence:            valence,
                   magnitude:          magnitude,
-                  dominant_dimension: dominant
+                  dominant_dimension: dominant,
+                  arousal:            Helpers::Valence.compute_arousal([valence])
                 }
               end
 
