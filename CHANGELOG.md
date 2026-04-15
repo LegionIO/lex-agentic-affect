@@ -5,6 +5,11 @@
 ### Fixed
 - add missing arousal value to evaluate_valence return hash for GAIA drive synthesis
 
+## [0.1.11] - 2026-04-15
+
+### Changed
+- Set `mcp_tools?`, `mcp_tools_deferred?`, and `transport_required?` to `false` — this is an internal cognitive pipeline extension, not an LLM-callable tool and does not use AMQP transport directly
+
 ## [0.1.9] - 2026-03-31
 
 ### Fixed
