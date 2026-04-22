@@ -150,6 +150,9 @@ module Legion
               end
 
               def extract_survival_signal(tick_results)
+                # Optional dependency: lex-agentic-defense Extinction subsystem.
+                # dig returns nil safely when :extinction or :level is absent; the
+                # guard below ensures we skip the update rather than raise.
                 extinction_level = tick_results.dig(:extinction, :level)
                 return unless extinction_level
 

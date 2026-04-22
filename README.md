@@ -5,7 +5,7 @@ Domain consolidation gem for emotion, affect, and motivational processing. Bundl
 ## Overview
 
 **Gem**: `lex-agentic-affect`
-**Version**: 0.1.11
+**Version**: 0.1.12
 **Namespace**: `Legion::Extensions::Agentic::Affect`
 
 ## Sub-Modules
@@ -32,16 +32,44 @@ Domain consolidation gem for emotion, affect, and motivational processing. Bundl
 
 ## Actors
 
-- `Affect::Emotion::Actors::MomentumDecay` — runs every 60s, decays emotional momentum via `decay_momentum`
-- `Affect::Interoception::Actors::Decay` — interval actor, decays interoceptive body state signals
-- `Affect::Reappraisal::Actors::AutoRegulate` — runs every 300s, processes pending emotional events
-- `Affect::SomaticMarker::Actors::Decay` — interval actor, decays somatic marker strength
+| Actor | Interval | What It Does |
+|-------|----------|--------------|
+| `Emotion::Actors::MomentumDecay` | Every 60s | Decays emotional momentum |
+| `Empathy::Actor::DecayModels` | Every 300s | Decays stale mental models in empathy store |
+| `Fatigue::Actor::UpdateFatigue` | Every 60s | Advances fatigue accumulation and recovery |
+| `Flow::Actor::UpdateFlow` | Every 30s | Updates flow state detection |
+| `Interoception::Actors::Decay` | interval | Decays interoceptive body state signals |
+| `Mood::Actor::UpdateMood` | Every 60s | Updates mood baseline |
+| `Reappraisal::Actors::AutoRegulate` | Every 300s | Processes pending emotional events |
+| `Regulation::Actor::RegulateEmotion` | Every 60s | Runs skill decay maintenance (background only — not live regulation) |
+| `Resilience::Actor::UpdateResilience` | Every 120s | Updates resilience and recovery metrics |
+| `SomaticMarker::Actors::Decay` | interval | Decays somatic marker strength |
 
 ## Installation
 
 ```ruby
 gem 'lex-agentic-affect'
 ```
+
+## Usage
+
+```ruby
+require 'legion/extensions/agentic/affect'
+
+# Signal a drive
+motivation = Legion::Extensions::Agentic::Affect::Motivation::Client.new
+motivation.signal_drive(drive: :novelty, signal: 0.8)
+motivation.commit_to_goal(goal_id: 'explore_codebase', drives: [:novelty, :competence])
+
+# Check motivation state
+motivation.drive_status
+# => { drives: { novelty: { level: 0.8, satisfied: false }, ... }, mode: :motivated, overall: 0.65 }
+```
+
+## Notes
+
+- `Affect::Motivation` reads an optional `:extinction` key from `tick_results` (from `lex-agentic-defense`) to update the survival drive. This dependency is guarded with `defined?()` and the gem works without it.
+- `Regulation::Actor::RegulateEmotion` calls `update_emotional_regulation` (skill decay), not `regulate_emotion` which requires a live emotion signal and cannot be safely called as a background tick.
 
 ## Development
 
