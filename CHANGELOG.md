@@ -2,8 +2,9 @@
 
 ## [0.1.12] - 2026-04-22
 ### Added
-- 6 new maintenance actors: Mood::Update (60s), Flow::Update (30s), Fatigue::Update (60s), Resilience::Update (120s), Regulation::RegulateEmotion (60s), Empathy::DecayModels (300s)
+- 6 new maintenance actors: Mood::Actor::UpdateMood (60s), Flow::Actor::UpdateFlow (30s), Fatigue::Actor::UpdateFatigue (60s), Resilience::Actor::UpdateResilience (120s), Regulation::Actor::RegulateEmotion (60s), Empathy::Actor::DecayModels (300s)
 ### Fixed
+- Valence runner: `evaluate_valence` return hash includes both `:valence` and `:arousal` — previously missing `arousal` key caused GAIA drive synthesis errors
 - Motivation runner extinction dependency guarded with comment documenting optional cross-extension coupling
 
 ## [0.1.11] - 2026-04-15
