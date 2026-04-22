@@ -1,9 +1,10 @@
 # Changelog
 
-## [Unreleased]
-
+## [0.1.12] - 2026-04-22
+### Added
+- 6 new maintenance actors: Mood::Update (60s), Flow::Update (30s), Fatigue::Update (60s), Resilience::Update (120s), Regulation::RegulateEmotion (60s), Empathy::DecayModels (300s)
 ### Fixed
-- add missing arousal value to evaluate_valence return hash for GAIA drive synthesis
+- Motivation runner extinction dependency guarded with comment documenting optional cross-extension coupling
 
 ## [0.1.11] - 2026-04-15
 
