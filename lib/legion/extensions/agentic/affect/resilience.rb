@@ -5,6 +5,7 @@ require 'legion/extensions/agentic/affect/resilience/helpers/constants'
 require 'legion/extensions/agentic/affect/resilience/helpers/adversity_tracker'
 require 'legion/extensions/agentic/affect/resilience/helpers/resilience_model'
 require 'legion/extensions/agentic/affect/resilience/runners/resilience'
+require 'legion/extensions/agentic/affect/resilience/actors/update_resilience'
 require 'legion/extensions/agentic/affect/resilience/client'
 
 module Legion
