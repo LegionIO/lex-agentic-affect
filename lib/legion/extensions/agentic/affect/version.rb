@@ -4,7 +4,7 @@ module Legion
   module Extensions
     module Agentic
       module Affect
-        VERSION = '0.1.12'
+        VERSION = '0.1.13'
       end
     end
   end

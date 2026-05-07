@@ -19,11 +19,10 @@ module Legion
             def initialize(**)
               @emotion_baseline = Helpers::Baseline.new
               @emotion_momentum = Helpers::Momentum.new
-              @domain_counts = Hash.new(0)
             end
 
             def track_domain(domain)
-              @domain_counts[domain] += 1
+              domain_counts[domain] += 1
             end
 
             private
