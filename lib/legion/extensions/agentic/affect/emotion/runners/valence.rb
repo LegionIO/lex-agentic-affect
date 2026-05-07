@@ -31,6 +31,7 @@ module Legion
                           novelty: novelty_raw, familiarity: familiarity_raw }[dim]
                   baseline.update(dim, raw)
                 end
+                record_domain_signal(domain)
 
                 magnitude = Helpers::Valence.magnitude(valence)
                 dominant = Helpers::Valence.dominant_dimension(valence)
@@ -111,6 +112,16 @@ module Legion
                 @emotion_baseline ||= Helpers::Baseline.new
               end
 
+              def domain_counts
+                @domain_counts ||= Hash.new(0)
+              end
+
+              def record_domain_signal(domain)
+                return unless domain
+
+                domain_counts[domain] += 1
+              end
+
               def compute_urgency(signal, source_type, deadline)
                 deadline_urgency = 0.0
                 if deadline
@@ -141,7 +152,7 @@ module Legion
               end
 
               def compute_familiarity(domain)
-                signal_count = @domain_counts&.fetch(domain, 0) || 0
+                signal_count = domain_counts.fetch(domain, 0)
                 Helpers::Valence.clamp(signal_count.to_f / Helpers::Valence::FAMILIARITY_SATURATION)
               end
             end

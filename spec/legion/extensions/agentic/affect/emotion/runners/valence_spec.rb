@@ -32,6 +32,14 @@ RSpec.describe Legion::Extensions::Agentic::Affect::Emotion::Runners::Valence do
       with_deadline = client.evaluate_valence(signal: {}, deadline: Time.now.utc + 60)
       expect(with_deadline[:valence][:urgency]).to be >= no_deadline[:valence][:urgency]
     end
+
+    it 'initializes and updates domain counts in runner-host usage' do
+      expect(client.instance_variable_get(:@domain_counts)).to be_nil
+
+      client.evaluate_valence(signal: {}, domain: :ops)
+
+      expect(client.instance_variable_get(:@domain_counts)[:ops]).to eq(1)
+    end
   end
 
   describe '#aggregate_valences' do

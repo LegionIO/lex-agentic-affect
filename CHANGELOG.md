@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.13] - 2026-05-07
+### Fixed
+- Valence evaluation now lazily initializes and updates domain signal counts so familiarity scoring works in runner-host usage.
+
 ## [0.1.12] - 2026-04-22
 ### Added
 - 6 new maintenance actors: Mood::Actor::UpdateMood (60s), Flow::Actor::UpdateFlow (30s), Fatigue::Actor::UpdateFatigue (60s), Resilience::Actor::UpdateResilience (120s), Regulation::Actor::RegulateEmotion (60s), Empathy::Actor::DecayModels (300s)
