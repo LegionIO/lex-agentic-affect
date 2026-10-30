@@ -8,7 +8,7 @@ module Legion
       module Affect
         module Flow
           module Actor
-            class UpdateFlow < Legion::Extensions::Actors::Every # rubocop:disable Legion/Extension/EveryActorRequiresTime
+            class UpdateFlow < Legion::Extensions::Actors::Every
               def runner_class
                 Legion::Extensions::Agentic::Affect::Flow::Runners::Flow
               end

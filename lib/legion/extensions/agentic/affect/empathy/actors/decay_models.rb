@@ -8,7 +8,7 @@ module Legion
       module Affect
         module Empathy
           module Actor
-            class DecayModels < Legion::Extensions::Actors::Every # rubocop:disable Legion/Extension/EveryActorRequiresTime
+            class DecayModels < Legion::Extensions::Actors::Every
               def runner_class
                 Legion::Extensions::Agentic::Affect::Empathy::Runners::Empathy
               end

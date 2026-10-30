@@ -39,9 +39,9 @@ module Legion
               end
 
               def decay_momentum(**)
-                neutral = { urgency: 0.5, importance: 0.5, novelty: 0.5, familiarity: 0.5 }
+                neutral = Helpers::Valence.new_valence
                 momentum = emotion_momentum
-                momentum.update(neutral, 0.5)
+                momentum.update(neutral, 0.0)
                 stability = momentum.stability
 
                 log.debug("[emotion] momentum decay: stability=#{stability.round(2)}")

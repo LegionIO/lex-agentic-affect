@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.14] - 2026-10-29
+### Fixed
+- Decay emotional momentum toward rest instead of introducing synthetic valence and arousal during idle maintenance.
+
 ## [0.1.13] - 2026-05-07
 ### Fixed
 - Valence evaluation now lazily initializes and updates domain signal counts so familiarity scoring works in runner-host usage.

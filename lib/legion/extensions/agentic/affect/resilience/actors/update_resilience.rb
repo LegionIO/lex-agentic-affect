@@ -8,7 +8,7 @@ module Legion
       module Affect
         module Resilience
           module Actor
-            class UpdateResilience < Legion::Extensions::Actors::Every # rubocop:disable Legion/Extension/EveryActorRequiresTime
+            class UpdateResilience < Legion::Extensions::Actors::Every
               def runner_class
                 Legion::Extensions::Agentic::Affect::Resilience::Runners::Resilience
               end
