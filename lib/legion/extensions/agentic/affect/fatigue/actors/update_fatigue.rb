@@ -8,7 +8,7 @@ module Legion
       module Affect
         module Fatigue
           module Actor
-            class UpdateFatigue < Legion::Extensions::Actors::Every # rubocop:disable Legion/Extension/EveryActorRequiresTime
+            class UpdateFatigue < Legion::Extensions::Actors::Every
               def runner_class
                 Legion::Extensions::Agentic::Affect::Fatigue::Runners::Fatigue
               end

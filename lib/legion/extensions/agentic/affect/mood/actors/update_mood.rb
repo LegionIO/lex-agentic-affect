@@ -8,7 +8,7 @@ module Legion
       module Affect
         module Mood
           module Actor
-            class UpdateMood < Legion::Extensions::Actors::Every # rubocop:disable Legion/Extension/EveryActorRequiresTime
+            class UpdateMood < Legion::Extensions::Actors::Every
               def runner_class
                 Legion::Extensions::Agentic::Affect::Mood::Runners::Mood
               end

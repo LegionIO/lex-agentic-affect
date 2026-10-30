@@ -55,6 +55,28 @@ RSpec.describe Legion::Extensions::Agentic::Affect::Emotion::Runners::Gut do
   end
 
   describe '#decay_momentum' do
+    it 'does not generate arousal without an emotional signal' do
+      3.times { client.decay_momentum }
+
+      state = client.emotional_state[:momentum]
+      expect(state[:arousal_ema]).to eq(0.0)
+      expect(state[:valence_ema].values).to all(eq(0.0))
+    end
+
+    it 'reduces a low-arousal signal toward rest rather than increasing it' do
+      valence = valence_mod.new_valence(urgency: 0.1, importance: 0.1, novelty: 0.1, familiarity: 0.1)
+      client.gut_instinct(valences: [valence])
+      before = client.emotional_state[:momentum]
+
+      client.decay_momentum
+
+      after = client.emotional_state[:momentum]
+      expect(after[:arousal_ema]).to be < before[:arousal_ema]
+      valence_mod::DIMENSIONS.each do |dimension|
+        expect(after[:valence_ema][dimension]).to be < before[:valence_ema][dimension]
+      end
+    end
+
     it 'returns decayed: true' do
       result = client.decay_momentum
       expect(result[:decayed]).to be true

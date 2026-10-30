@@ -12,7 +12,7 @@ module Legion
             # Calls update_emotional_regulation which performs skill decay — no live emotion
             # inputs are required. regulate_emotion itself requires emotion_magnitude: and
             # cannot be safely invoked as a background tick without a signal source.
-            class RegulateEmotion < Legion::Extensions::Actors::Every # rubocop:disable Legion/Extension/EveryActorRequiresTime
+            class RegulateEmotion < Legion::Extensions::Actors::Every
               def runner_class
                 Legion::Extensions::Agentic::Affect::Regulation::Runners::EmotionalRegulation
               end
