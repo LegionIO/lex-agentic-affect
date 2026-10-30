@@ -73,10 +73,9 @@ module Legion
               def resonate_with(match, normalized)
                 category = @categories[match[:id]]
                 category.update_prototype!(input: normalized)
-                # rubocop:disable Legion/HelperMigration/DirectLogging
+                # rubocop:disable-next Legion/HelperMigration/DirectLogging
                 Legion::Logging.debug("[cognitive_resonance] resonance with category #{match[:id][0..7]} " \
                                       "quality=#{match[:quality].round(3)} vigilance=#{@vigilance.round(3)}")
-                # rubocop:enable Legion/HelperMigration/DirectLogging
                 {
                   outcome:     :resonance,
                   category_id: match[:id],
@@ -90,10 +89,9 @@ module Legion
                 prune_if_full!
                 category = Category.new(prototype: normalized)
                 @categories[category.id] = category
-                # rubocop:disable Legion/HelperMigration/DirectLogging
+                # rubocop:disable-next Legion/HelperMigration/DirectLogging
                 Legion::Logging.debug("[cognitive_resonance] new category #{category.id[0..7]} " \
                                       "total=#{@categories.size} vigilance=#{@vigilance.round(3)}")
-                # rubocop:enable Legion/HelperMigration/DirectLogging
                 {
                   outcome:     :new_category,
                   category_id: category.id,

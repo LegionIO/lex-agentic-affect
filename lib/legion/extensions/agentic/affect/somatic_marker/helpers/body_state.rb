@@ -19,9 +19,9 @@ module Legion
               end
 
               def update(arousal: nil, tension: nil, comfort: nil, gut_signal: nil)
-                @arousal    = arousal.clamp(0.0, 1.0)    if arousal
-                @tension    = tension.clamp(0.0, 1.0)    if tension
-                @comfort    = comfort.clamp(0.0, 1.0)    if comfort
+                @arousal    = arousal.clamp(0.0, 1.0) if arousal
+                @tension    = tension.clamp(0.0, 1.0) if tension
+                @comfort    = comfort.clamp(0.0, 1.0) if comfort
                 @gut_signal = gut_signal.clamp(-1.0, 1.0) if gut_signal
               end
 
